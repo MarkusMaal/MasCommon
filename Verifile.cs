@@ -67,6 +67,9 @@ public class Verifile
     {
         if (DateTime.Now - LastCheck <= new TimeSpan(0, 1, 0)) return AttestationState;
         if (Debugger.IsAttached) { Console.Write("Making attestation...\r");}
+        if (!Directory.Exists(root)) {
+			return "FOREIGN";
+        }
         LastCheck = DateTime.Now;
         BuildJavaFinder();
         var p = new Process
