@@ -77,7 +77,7 @@ public class Verifile
             StartInfo = new ProcessStartInfo
             {
                 FileName = FindJava(),
-                Arguments = "-jar " + root + "/verifile2.jar",
+                Arguments = "-jar \"" + root + "/verifile2.jar\"",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 CreateNoWindow = true,
