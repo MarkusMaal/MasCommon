@@ -74,7 +74,7 @@ public class Verifile
             StartInfo = new ProcessStartInfo
             {
                 FileName = FindJava(),
-                Arguments = " --enable-native-access=ALL-UNNAMED -jar " + root + "/verifile2.jar",
+                Arguments = " --enable-native-access=ALL-UNNAMED -jar \"" + root + "/verifile2.jar\"",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 CreateNoWindow = true,
