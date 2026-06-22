@@ -13,19 +13,19 @@ public class SpecialIcon
     /// <summary>
     /// State A of the icon.
     /// </summary>
-    public string IconA { get; set; }
+    public required string IconA { get; set; }
     
     /// <summary>
     /// State B of the icon.
     /// </summary>
-    public string IconB { get; set; }
+    public required string IconB { get; set; }
     
     
     /// <summary>
     /// The app to run
     /// If special: prefix is used, a command for this program is executed instead
     /// </summary>
-    public string Executable { get; set; }
+    public required string Executable { get; set; }
     
     /// <summary>
     /// Location on the desktop (X-coordinate)

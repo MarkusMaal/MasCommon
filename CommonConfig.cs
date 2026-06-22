@@ -31,20 +31,17 @@ namespace MasCommon
         /// </summary>
         public int PollRate { get; set; }
 
-        [JsonIgnore]
-        private readonly JsonSerializerOptions _cnfSerializerOptions = new() { WriteIndented = true, TypeInfoResolver = MasConfigSourceGenerationContext.Default };
-
         /// <summary>
         /// Replaces current configuration
         /// </summary>
         /// <param name="mas_root">Root directory for Markus' stuff system. Usually %UserProfile\.mas.</param>
         public void Load(string mas_root)
         {
-            var cnf = JsonSerializer.Deserialize<CommonConfig>(File.ReadAllText(mas_root + "/Config.json"), _cnfSerializerOptions);
-            this.AutostartNotes = cnf.AutostartNotes;
-            this.AllowScheduledTasks = cnf.AllowScheduledTasks;
-            this.ShowLogo = cnf.ShowLogo;
-            this.PollRate = cnf.PollRate;
+            var cnf = JsonSerializer.Deserialize(File.ReadAllText(mas_root + "/Config.json"), MasConfigSourceGenerationContext.Default.CommonConfig);
+            this.AutostartNotes = cnf?.AutostartNotes ?? false;
+            this.AllowScheduledTasks = cnf?.AllowScheduledTasks ?? false;
+            this.ShowLogo = cnf?.ShowLogo ?? false;
+            this.PollRate = cnf?.PollRate ?? 5000;
         }
 
         /// <summary>
@@ -53,7 +50,7 @@ namespace MasCommon
         /// <param name="mas_root">Root directory for Markus' stuff system. Usually %UserProfile\.mas.</param>
         public void Save(string mas_root)
         {
-            var jsonData = JsonSerializer.Serialize(this, this._cnfSerializerOptions);
+            var jsonData = JsonSerializer.Serialize(this, MasConfigSourceGenerationContext.Default.CommonConfig);
             File.WriteAllText(mas_root + "/Config.json", jsonData);
         }
     }

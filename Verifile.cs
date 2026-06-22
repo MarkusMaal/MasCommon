@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Globalization;
-using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -12,7 +11,7 @@ namespace MasCommon;
 public class Verifile
 {
     private static string root = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "/.mas";
-    private static readonly string[] whitelistedHashes = { "5163C4D1C46A317DCDF87542582DA7B47B5CCA68C16B8C821BC33BB71FD2A870", "B881FBAB5E73D3984F2914FAEA743334D1B94DFFE98E8E1C4C8C412088D2C9C2", "A0B93B23301FC596789F83249A99F507A9DA5CBA9D636E4D4F88676F530224CB", "B08AABB1ED294D8292FDCB2626D4B77C0A53CB4754F3234D8E761E413289057F", "8076CF7C156D44472420C1225B9F6ADB661E3B095E29E52E3D4E8598BB399A8F", "024AEC0A16092DAF6427D6178CEB9322E92FFFE37C92DCF0405494785EE3DA47" };
+    private static readonly string[] whitelistedHashes = ["5163C4D1C46A317DCDF87542582DA7B47B5CCA68C16B8C821BC33BB71FD2A870", "B881FBAB5E73D3984F2914FAEA743334D1B94DFFE98E8E1C4C8C412088D2C9C2", "A0B93B23301FC596789F83249A99F507A9DA5CBA9D636E4D4F88676F530224CB", "B08AABB1ED294D8292FDCB2626D4B77C0A53CB4754F3234D8E761E413289057F", "8076CF7C156D44472420C1225B9F6ADB661E3B095E29E52E3D4E8598BB399A8F", "024AEC0A16092DAF6427D6178CEB9322E92FFFE37C92DCF0405494785EE3DA47"];
     
     private DateTime LastCheck = DateTime.MinValue;
     private string AttestationState = "BYPASS"; // save attestation state for performance reasons
@@ -46,10 +45,9 @@ public class Verifile
         string hash = "";
         using (var sha256 = SHA256.Create())
         {
-            using (var stream = File.OpenRead(root + "/verifile2.jar"))
-            {
-                hash = BitConverter.ToString(sha256.ComputeHash(stream));
-            }
+            using var stream = File.OpenRead(root + "/verifile2.jar");
+            hash = BitConverter.ToString(sha256.ComputeHash(stream));
+            stream.Close();
         }
         if (!whitelistedHashes.Contains(hash.Replace("-", "")))
         {
@@ -107,7 +105,7 @@ public class Verifile
     /// Finds the latest version of Java installed on your system, since if you install the Java SE version, Verifile may not work with it.
     /// </summary>
     /// <returns>Path to the latest Java binary found on your system</returns>
-    private string FindJava()
+    private static string FindJava()
     {
         var culture = CultureInfo.CurrentCulture;
         var p = culture.NumberFormat.NumberDecimalSeparator;
@@ -147,7 +145,7 @@ public class Verifile
     /// <summary>
     /// Builds a script that displays all Java binaries and versions for your system and marks it executable (Unix-like systems)
     /// </summary>
-    private void BuildJavaFinder()
+    private static void BuildJavaFinder()
     {
         if (File.Exists(root + "/find_java" + (OperatingSystem.IsWindows() ? ".bat" : ".sh"))) return;
         var builder = new StringBuilder();
@@ -205,7 +203,6 @@ public class Verifile
     /// <returns>Boolean value, true when all files are present</returns>
     public static bool CheckFiles(FileScope Scope)
     {
-        var r = false;
         string[] filesToCheck = [];
         switch (Scope)
         {
@@ -219,15 +216,14 @@ public class Verifile
                 filesToCheck = ["edition.txt", "edition_1.txt", "events.txt", "scheme.cfg", "mas.cnf", "bg_common.png", "bg_desktop.png", "bg_login.png", "bg_uncommon.png"];
                 if (OperatingSystem.IsWindows())
                 {
-                    filesToCheck = filesToCheck.Concat(["ChangeWallpaper.exe", "CD_Close.ps1", "CD_open.ps1", "refresh.vbs"]).ToArray();
+                    filesToCheck = [.. filesToCheck, "ChangeWallpaper.exe", "CD_Close.ps1", "CD_open.ps1", "refresh.vbs"];
                 }
                 break;
             case FileScope.InteractiveDesktop:
                 filesToCheck = ["edition.txt", "edition_1.txt"];
                 if (OperatingSystem.IsWindows())
                 {
-                    filesToCheck = filesToCheck.Concat(["remas.bat", 
-    "itstart.bat", "redoexp.cmd"]).ToArray();
+                    filesToCheck = [.. filesToCheck, "remas.bat", "itstart.bat", "redoexp.cmd"];
                 }
                 break;
             case FileScope.DesktopIcons:
